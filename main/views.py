@@ -375,7 +375,7 @@ def home(request):
     # Check if there is any data
     if not data:
         message = "No data available for this week. Please log your trips to see graphs."
-        return render(request, 'mainapp/mappage.html', {'chats': chats, 'message': message})
+        return render(request, 'main/home.html', {'chats': chats, 'message': message})
 
     # Calculate the overall total distance and total carbon footprint
     total_distance = sum(item['total_distance'] for item in data)

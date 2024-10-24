@@ -32,7 +32,8 @@ SECRET_KEY = 'django-insecure-@^2@$&rmqn-#@zk_@-wywk&n^hdvua&f*axd!%icn@4^z#psi+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ecowheels.onrender.com',]
+ALLOWED_HOSTS = ['ecowheels.onrender.com',
+                 '127.0.0.1',]
 
 
 # Application definition
@@ -83,19 +84,19 @@ WSGI_APPLICATION = 'Ecowheels.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(default=env('DATABASE_URL'))
+    }
 
-import dj_database_url
-
-DATABASES = {
-    'default' : dj_database_url.parse(env('DATABASE_URL'))
-}
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -129,11 +130,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+DEBUG = True  # Set to False in production
 
+# Static files settings
 STATIC_URL = '/static/'
-STATICFILES_DIRS =[BASE_DIR /"static",]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if DEBUG:  # Development settings
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Directory for your static files during development
+else:  # Production settings
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Directory for collectstatic in production
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
